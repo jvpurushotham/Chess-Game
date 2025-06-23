@@ -10,7 +10,7 @@ mode = "human"
 move_history = []
 
 try:
-    engine = chess.engine.SimpleEngine.popen_uci("stockfish")
+    engine = chess.engine.SimpleEngine.popen_uci("./stockfish")
 except Exception as e:
     print("Stockfish engine error:", e)
     engine = None
@@ -371,4 +371,5 @@ def reset():
     return jsonify({'message': 'Game reset'})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=10000)
+
