@@ -98,6 +98,8 @@ HTML = '''
 
     .selected {
       outline: 3px solid red;
+      position: relative;
+      z-index: 5;
     }
 
     @media (max-width: 768px) {
