@@ -266,6 +266,11 @@ HTML = '''
     }
 
     async function makeMove(from, to) {
+      if (from === to) {
+        document.getElementById("message").innerText = "Deselected square " + from;
+        return;
+      }
+    
       let promotion = '';
       if ((from[1] === '7' && to[1] === '8') || (from[1] === '2' && to[1] === '1')) {
         promotion = prompt("Promote to (q, r, b, n):", "q");
