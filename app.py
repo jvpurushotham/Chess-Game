@@ -98,6 +98,8 @@ HTML = '''
 
     .selected {
       outline: 3px solid red;
+      position: relative;
+      z-index: 5;
     }
 
     @media (max-width: 768px) {
@@ -154,6 +156,8 @@ HTML = '''
 
     let draggedFrom = null;
     let clickedFrom = null;
+    
+    let pieces = new Map(); // stores pieces as: pieces.get("e2") === 'P'
 
     async function fetchFEN() {
       const res = await fetch('/fen');
@@ -175,30 +179,34 @@ HTML = '''
     function renderBoard(fen) {
       const boardDiv = document.getElementById("chessboard");
       boardDiv.innerHTML = '';
-      const rows = fen.split(" ")[0].split("/");
-      for (let row = 0; row < 8; row++) {
-        let col = 0;
-        for (let char of rows[row]) {
+      // here rows and cols are not in chess format, so prefix t (for temp) was added
+      const trows = fen.split(" ")[0].split("/");
+      for (let trow = 0; trow < 8; trow++) {
+        let tcol = 0;
+        for (let char of trows[trow]) {
           if (!isNaN(char)) {
             for (let i = 0; i < parseInt(char); i++) {
-              addSquare(row, col++, '');
+              addSquare(trow, tcol++, '');
             }
           } else {
-            addSquare(row, col, char);
-            col++;
+            addSquare(trow, tcol, char);
+            tcol++;
           }
         }
       }
     }
 
-    function addSquare(row, col, pieceChar) {
+    function addSquare(trow, tcol, pieceChar) {
       const square = document.createElement("div");
-      square.className = "square " + ((row + col) % 2 === 0 ? "white" : "black");
+      square.className = "square " + ((trow + tcol) % 2 === 0 ? "white" : "black");
+      chess_rc=toChess(trow, tcol);
+      row = chess_rc[0];
+      col = chess_rc[1];
       square.dataset.row = row;
       square.dataset.col = col;
       square.ondrop = drop;
       square.ondragover = allowDrop;
-      square.onclick = () => squareClick(row, col);
+      square.onclick = () => squareClick(square.dataset.row, square.dataset.col);
 
       if (pieceChar) {
         const piece = document.createElement("div");
@@ -209,9 +217,16 @@ HTML = '''
         piece.dataset.col = col;
         piece.ondragstart = drag;
         square.appendChild(piece);
+        pieces.set(row+col, pieceChar);
+      } else {
+        pieces.set(row+col, null);      
       }
 
       document.getElementById("chessboard").appendChild(square);
+    }
+    
+    function toChess(trow, tcol) {
+      return 'abcdefgh'[tcol] + (8 - trow);
     }
 
     function squareClick(row, col) {
@@ -219,8 +234,8 @@ HTML = '''
         clickedFrom = { row, col };
         highlight(row, col);
       } else {
-        const from = toChess(clickedFrom.row, clickedFrom.col);
-        const to = toChess(row, col);
+        const from = clickedFrom.row + clickedFrom.col;
+        const to = row + col;
         makeMove(from, to);
         clearHighlights();
         clickedFrom = null;
@@ -239,10 +254,6 @@ HTML = '''
       document.querySelectorAll(".square").forEach(sq => sq.classList.remove("selected"));
     }
 
-    function toChess(row, col) {
-      return 'abcdefgh'[col] + (8 - row);
-    }
-
     function drag(event) {
       draggedFrom = {
         row: event.target.dataset.row,
@@ -258,14 +269,24 @@ HTML = '''
       event.preventDefault();
       const toRow = event.currentTarget.dataset.row;
       const toCol = event.currentTarget.dataset.col;
-      const from = toChess(draggedFrom.row, draggedFrom.col);
-      const to = toChess(toRow, toCol);
+      const from = draggedFrom.row + draggedFrom.col;
+      const to = toRow + toCol;
       makeMove(from, to);
     }
 
     async function makeMove(from, to) {
+      if (from === to) {
+        document.getElementById("message").innerText = "Deselected square " + from;
+        return;
+      }
+    
       let promotion = '';
-      if ((from[1] === '7' && to[1] === '8') || (from[1] === '2' && to[1] === '1')) {
+      const piece = pieces.get(from)
+      if ( 
+        ((from[1] === '7' && to[1] === '8') || (from[1] === '2' && to[1] === '1'))
+        && (piece === 'P' || piece === 'p')
+      )
+      {
         promotion = prompt("Promote to (q, r, b, n):", "q");
       }
 

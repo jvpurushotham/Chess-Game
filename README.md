@@ -20,18 +20,21 @@ Welcome to the Web Chess Game — a sleek, interactive chess platform built usin
 ### Installation      
 
 **Clone the repository**   
-- git clone https://github.com/yourusername/web-chess-game.git     
-- cd web-chess-game      
+- `git clone https://github.com/jvpurushotham/Chess-Game.git`
+- `cd Chess-Game`
+
 **Install dependencies**     
-- pip install -r requirements.txt     
+- `pip install -r requirements.txt`
 - Ensure Stockfish is installed     
-- Download from: https://stockfishchess.org/download/    
-- Then, add stockfish to your system PATH. 
+  - Download from: https://stockfishchess.org/download/    
+  - Then, add stockfish to your system PATH.
+  - If Stockfish is not installed, the engine will instead make random moves.
+
 **Run the app**       
-- python app.py       
+- `python app.py`  
 - Open your browser and go to:     
-- http://127.0.0.1:5000/     
-- 
+- http://127.0.0.1:10000/     
+
 ### Screenshots
 
 ![image](https://github.com/user-attachments/assets/68f1e4e5-405d-49c1-b3f7-d46cae709253)
@@ -48,5 +51,6 @@ If you liked this project, don’t forget to ⭐ star the repository!
 
 ### 👨‍💻 Author
 
-Developed by [J V Purushotham]
+Developed by [J V Purushotham](https://github.com/jvpurushotham)
+
 Contact: jvpurushotham31@gmail.com
