@@ -156,6 +156,8 @@ HTML = '''
 
     let draggedFrom = null;
     let clickedFrom = null;
+    
+    let pieces = new Map(); // stores pieces as: pieces.get("e2") === 'P'
 
     async function fetchFEN() {
       const res = await fetch('/fen');
@@ -215,6 +217,9 @@ HTML = '''
         piece.dataset.col = col;
         piece.ondragstart = drag;
         square.appendChild(piece);
+        pieces.set(row+col, pieceChar);
+      } else {
+        pieces.set(row+col, null);      
       }
 
       document.getElementById("chessboard").appendChild(square);
@@ -276,7 +281,12 @@ HTML = '''
       }
     
       let promotion = '';
-      if ((from[1] === '7' && to[1] === '8') || (from[1] === '2' && to[1] === '1')) {
+      const piece = pieces.get(from)
+      if ( 
+        ((from[1] === '7' && to[1] === '8') || (from[1] === '2' && to[1] === '1'))
+        && (piece === 'P' || piece === 'p')
+      )
+      {
         promotion = prompt("Promote to (q, r, b, n):", "q");
       }
 
