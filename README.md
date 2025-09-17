@@ -20,7 +20,7 @@ Welcome to the Web Chess Game — a sleek, interactive chess platform built usin
 ### Installation      
 
 **Clone the repository**   
-- git clone https://github.com/yourusername/web-chess-game.git     
+- git clone https://github.com/jvpurushotham/Chess-Game.git     
 - cd web-chess-game      
 **Install dependencies**     
 - pip install -r requirements.txt     
