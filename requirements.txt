@@ -1,2 +1,3 @@
-Flask==2.3.2
-python-chess==1.999
+Flask
+python-chess
+gunicorn
